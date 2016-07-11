@@ -1,1 +1,2 @@
 # gsoep
+This repository contains code related to an analysis of parent socioeconomic resources, personality, and adult socioeconomic resources using Das Sozio-oekonomische Panel data. This is not publicly available data.
