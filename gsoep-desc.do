@@ -14,7 +14,7 @@ rename (agreeableness05 agreeableness09 conscientiousness05             ///
         conscientiousness09 extraversion05 extraversion09 neuroticism05 ///
 		neuroticism09 openness05 openness09)                            ///
        (agr05 agr09 con05 con09 ext05 ext09 neu05 neu09 ope05 ope09)
-rename (educ4cat09 autono09) (edu09 aut09)
+rename (educ4cat09 autono09 living1) (edu09 aut09 liv1)
 
 recode emplst09 (1 = 3) (2 = 2) (3 4 5 6 = 1), gen(emp09)
 lab var emp09 "employment status"
@@ -45,10 +45,40 @@ lab val ped ed
 lab val edu09 ed
 
 *** setting analysis sample and keeping analysis variables
-keep if !mi(agr05, con05, ext05, neu05, ope05)
-keep if age09 >= 25 & age09 <= 65
 keep edu09 emp09 inc09 aut09 mps09 agr05 con05 ext05 neu05 ope05 age09 ///
-     female ped 
+     female ped liv1 zbula nation05
+
+* age 25 to 65 in 2009
+dis _N
+drop if mi(age09)
+drop if age09 < 25 | age09 > 65
+dis _N
+
+tempvar m1 m2 m3 m4 m5
+egen `m1' = rownonmiss(edu09 emp09)
+tab `m1' 
+
+egen `m2' = rownonmiss(inc09 mps09 aut09)
+tab `m2'
+
+egen `m3' = rownonmiss(agr05 con05 ext05 neu05 ope05)
+tab `m3'
+
+tab `m3' if `m1' == 2
+
+tab ped
+tab liv1
+tab zbula
+tab nation05
+
+egen `m4' = rownonmiss(edu09 emp09 agr05 con05 ext05 neu05 ope05 ped)
+tab `m4'
+
+egen `m5' = rownonmiss(inc09 mps09 aut09 agr05 con05 ext05 neu05 ope05 ped)
+tab `m5'
+
+keep if `m4' == 8
+
 
 *** outcomes
 sum edu09 emp09 inc09 mps09 aut09
