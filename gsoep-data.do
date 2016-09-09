@@ -1,4 +1,4 @@
-*** Purpose: descriptives and preliminary gsoep analysis
+*** Purpose: data preparation for gsoep analysis
 *** Author: S Bauldry
 *** Date: September 8, 2016
 
@@ -43,12 +43,14 @@ lab def ed 1 "no voc edu"  2 "app training" 3 "master/tech" 4 "university"
 lab val ped ed
 lab val edu09 ed
 
+gen wgt = vphrf*wpbleib*xpbleib*ypbleib*zpbleib
+
 *** setting analysis sample and keeping analysis variables
 keep if from2005 == 1 & from2009 == 1
 keep if age09 >= 25 & age09 <= 65
 
 keep edu09 emp09 lnnwg09 lngwg09 aut09 mps09 agr05 con05 ext05 neu05 ope05 ///
-     agr09 con09 ext09 neu09 ope09 age09 female ped liv1 west
+     agr09 con09 ext09 neu09 ope09 age09 female ped liv1 west wgt
 
 *** saving data for analysis
 save gsoep-data-2, replace
