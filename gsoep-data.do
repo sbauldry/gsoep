@@ -46,11 +46,14 @@ lab val edu09 ed
 gen wgt = vphrf*wpbleib*xpbleib*ypbleib*zpbleib
 
 *** setting analysis sample and keeping analysis variables
+dis _N
 keep if from2005 == 1 & from2009 == 1
 keep if age09 >= 25 & age09 <= 65
+keep if !mi(ped)
+keep if !mi(agr05, con05, ext05, neu05, ope05)
 
 keep edu09 emp09 lnnwg09 lngwg09 aut09 mps09 agr05 con05 ext05 neu05 ope05 ///
-     agr09 con09 ext09 neu09 ope09 age09 female ped liv1 west wgt
+     agr09 con09 ext09 neu09 ope09 age09 female ped west wgt
 
 *** saving data for analysis
 save gsoep-data-2, replace
