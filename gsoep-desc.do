@@ -6,13 +6,21 @@
 use gsoep-data-2.dta, replace
 
 
-
-
-
-
 *** socioeconomic measures
-sum edu09 emp09 inc09 mps09 aut09 ped
+* just keeping values for wages, prestige, and autonomy for full-time workers
+replace lnnwg09 = . if emp09 != 1
+replace mps09   = . if emp09 != 1
+replace aut09   = . if emp09 != 1
 
+qui tab edu09, gen(ed)
+qui tab emp09, gen(em)
+qui tab ped, gen(pe)
+
+bysort female: sum ed1-ed4 em1-em3 lnnwg09 mps09 aut09 pe1-pe4
+
+
+
+tab female
 tempfile g1 g2 g3 g4 g5 g6
 tempvar eduf empf pedf
 qui sum edu09
