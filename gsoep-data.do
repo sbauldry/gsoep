@@ -12,7 +12,6 @@ use gsoep-data.dta, replace
 gen female = (sex == 2)
 
 gen west = (l1110205 == 1) if !mi(l1110205)
-desc l1110205
 
 rename (agreeableness05 agreeableness09 conscientiousness05             ///
         conscientiousness09 extraversion05 extraversion09 neuroticism05 ///
@@ -23,6 +22,11 @@ rename (educ4cat09 autono09 e1110305) (edu09 aut09 emp09)
 
 gen lnnwg09 = ln(hourlywage09_n + 1)
 gen lngwg09 = ln(hourlywage09_g + 1)
+
+replace lnnwg09 = . if emp09 != 1
+replace lngwg09 = . if emp09 != 1
+replace mps09   = . if emp09 != 1
+replace aut09   = . if emp09 != 1
 
 gen age09 = 2009 - gebjahr
 
