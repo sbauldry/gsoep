@@ -27,12 +27,12 @@ tempfile g1 g2 g3 g4 g5
 graph twoway (scatter agr age, msymbol(Oh)) (lowess agr age), scheme(s1mono) ///
   ytit("correlation 05/09") ylab(0.35(0.1).75, angle(horizontal) grid)       ///
   xlab(25(10)65) tit("agreeableness") legend(off) saving(`g1', replace)      ///
-  text(.35 30 "{bf:r = 0.52}") 
+  text(.35 30 "{bf:r = 0.53}") 
   
 graph twoway (scatter con age, msymbol(Oh)) (lowess con age), scheme(s1mono) ///
   ytit("correlation 05/09") ylab(0.35(0.1).75, angle(horizontal) grid)       ///
   xlab(25(10)65) tit("conscientiousness") legend(off) saving(`g2', replace)  ///
-  text(.35 30 "{bf:r = 0.52}") 
+  text(.35 30 "{bf:r = 0.53}") 
   
 graph twoway (scatter ext age, msymbol(Oh)) (lowess ext age), scheme(s1mono) ///
   ytit("correlation 05/09") ylab(0.35(0.1).75, angle(horizontal) grid)       ///
@@ -47,8 +47,8 @@ graph twoway (scatter ope age, msymbol(Oh)) (lowess ope age), scheme(s1mono) ///
 graph twoway (scatter neu age, msymbol(Oh)) (lowess neu age), scheme(s1mono) ///
   ytit("correlation 05/09") ylab(0.35(0.1).75, angle(horizontal) grid)       ///
   xlab(25(10)65) tit("neuroticism") legend(off) saving(`g5', replace)        ///
-  text(.35 30 "{bf:r = 0.57}") 
+  text(.35 30 "{bf:r = 0.58}") 
 
-graph combine "`g1'" "`g2'" "`g3'" "`g4'" "`g5'", scheme(s1mono)
-graph export gsoep-figX.pdf, replace
+graph combine "`g1'" "`g2'" "`g3'" "`g5'" "`g4'", scheme(s1mono)
+graph export gsoep-memo-2-fig2.pdf, replace
 restore
