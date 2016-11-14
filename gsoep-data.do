@@ -8,6 +8,8 @@ use gsoep-data.dta, replace
 
 *** additional data preparation
 gen fem = (sex == 2)
+lab def s 0 "M" 1 "F"
+lab val fem s
 
 gen west = (l1110205 == 1) if !mi(l1110205)
 
@@ -47,10 +49,10 @@ keep if west
 keep if !mi(ped)
 
 egen nm05 = rowmiss(age05 agr05 con05 ext05 neu05 ope05 edu05 wgt05)
-gen sam05 = ( nm05 == 0 )
+gen sam05 = ( nm05 == 0 & age05 >= 25)
 
 egen nm09 = rowmiss(age09 agr09 con09 ext09 neu09 ope09 edu09 wgt09)
-gen sam09 = ( nm09 == 0 )
+gen sam09 = ( nm09 == 0 & age09 >= 25)
 
 keep if sam05 | sam09
 
@@ -60,4 +62,4 @@ order ped fem west age05 agr05 con05 ext05 neu05 ope05 edu05 sam05 wgt05 ///
 keep ped-wgt09
 
 *** saving data for analysis
-save gsoep-data, replace
+save gsoep-data-2, replace
