@@ -1,15 +1,13 @@
 *** Purpose: data preparation for gsoep analysis
 *** Author: S Bauldry
-*** Date: September 8, 2016
+*** Date: November 14, 2016
 
 *** loading data prepared by Renee Ryberg
-*** original file name: GSOEPclean_V4
-*** do file for data creation: GSOEP data cleaning_9.8.16.do
+*** original file name: GSOEPclean_V5
 use gsoep-data.dta, replace
 
-
 *** additional data preparation
-gen female = (sex == 2)
+gen fem = (sex == 2)
 
 gen west = (l1110205 == 1) if !mi(l1110205)
 
@@ -18,16 +16,12 @@ rename (agreeableness05 agreeableness09 conscientiousness05             ///
 		neuroticism09 openness05 openness09)                            ///
        (agr05 agr09 con05 con09 ext05 ext09 neu05 neu09 ope05 ope09)
 
-rename (educ4cat09 autono09 e1110305) (edu09 aut09 emp09)
+rename (educ4cat05 educ4cat09) (edu05 edu09)
 
-gen lnnwg09 = ln(hourlywage09_n + 1)
-gen lngwg09 = ln(hourlywage09_g + 1)
+lab def ed 1 "no voc edu" 2 "apprentice" 3 "master/tech" 4 "university"
+lab val edu05 edu09 ed
 
-replace lnnwg09 = . if emp09 != 1
-replace lngwg09 = . if emp09 != 1
-replace mps09   = . if emp09 != 1
-replace aut09   = . if emp09 != 1
-
+gen age05 = 2005 - gebjahr
 gen age09 = 2009 - gebjahr
 
 gen fed = .
@@ -43,22 +37,27 @@ replace med = 3 if msbil < 6 & mbbil >= 26 & mbbil <= 28
 replace med = 4 if msbil < 6 & mbbil >= 30 & mbbil <= 32
 
 egen ped = rowmax(fed med)
-lab var ped "parent education"
-lab def ed 1 "no voc edu"  2 "app training" 3 "master/tech" 4 "university"    
+lab var ped "parent education"   
 lab val ped ed
-lab val edu09 ed
 
-gen wgt = vphrf*wpbleib*xpbleib*ypbleib*zpbleib
+rename (vphrf zphrf) (wgt05 wgt09)
 
-*** setting analysis sample and keeping analysis variables
-keep if from2005 == 1 & from2009 == 1
-keep if age09 >= 25 & age09 <= 65
-keep if west == 1
+*** keeping variables for analysis and setting analysis samples
+keep if west
 keep if !mi(ped)
-keep if !mi(agr05, con05, ext05, neu05, ope05)
 
-keep edu09 emp09 lnnwg09 lngwg09 aut09 mps09 agr05 con05 ext05 neu05 ope05 ///
-     agr09 con09 ext09 neu09 ope09 age09 female ped wgt
+egen nm05 = rowmiss(age05 agr05 con05 ext05 neu05 ope05 edu05 wgt05)
+gen sam05 = ( nm05 == 0 )
+
+egen nm09 = rowmiss(age09 agr09 con09 ext09 neu09 ope09 edu09 wgt09)
+gen sam09 = ( nm09 == 0 )
+
+keep if sam05 | sam09
+
+order ped fem west age05 agr05 con05 ext05 neu05 ope05 edu05 sam05 wgt05 ///
+      age09 agr09 con09 ext09 neu09 ope09 edu09 sam09 wgt09
+
+keep ped-wgt09
 
 *** saving data for analysis
-save gsoep-data-2, replace
+save gsoep-data, replace

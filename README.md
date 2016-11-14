@@ -1,2 +1,2 @@
 # gsoep
-This repository contains code related to an analysis of the relationships between parent education, the Big 5 dimensions of personality, and selected socioeconomic outcomes using data from the German Socio-Economic Panel study. . This is not publicly available data.
+This repository contains code related to an analysis of the relationships between parent education, the Big 5 dimensions of personality, and selected socioeconomic outcomes using data from the German Socio-Economic Panel study. This is not publicly available data.
