@@ -44,22 +44,29 @@ lab val ped ed
 
 rename (vphrf zphrf) (wgt05 wgt09)
 
-*** keeping variables for analysis and setting analysis samples
+*** keeping variables for analysis and setting analysis sample
+keep if from2005 == 1
+dis _N
+
+keep if !mi(wgt05)
+dis _N
+
+keep if age05 >= 25
+dis _N
+
 keep if west
+dis _N
+
+keep if !mi(edu05)
+dis _N
+
 keep if !mi(ped)
+dis _N
 
-egen nm05 = rowmiss(age05 agr05 con05 ext05 neu05 ope05 edu05 wgt05)
-gen sam05 = ( nm05 == 0 & age05 >= 25)
+keep if !mi(agr05, con05, ext05, neu05, ope05)
+dis _N
 
-egen nm09 = rowmiss(age09 agr09 con09 ext09 neu09 ope09 edu09 wgt09)
-gen sam09 = ( nm09 == 0 & age09 >= 25)
-
-keep if sam05 | sam09
-
-order ped fem west age05 agr05 con05 ext05 neu05 ope05 edu05 sam05 wgt05 ///
-      age09 agr09 con09 ext09 neu09 ope09 edu09 sam09 wgt09
-
-keep ped-wgt09
+keep edu05 ped age05 agr05 con05 ext05 neu05 ope05 wgt05
 
 *** saving data for analysis
 save gsoep-data-2, replace
