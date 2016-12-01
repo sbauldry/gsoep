@@ -7,8 +7,7 @@ use gsoep-data-2.dta, replace
 
 
 *** sex distribution
-tab fem if sam05
-tab fem if sam09
+tab fem 
 
 
 *** age distributions

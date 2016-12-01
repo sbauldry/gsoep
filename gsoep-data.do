@@ -54,19 +54,25 @@ dis _N
 keep if age05 >= 25
 dis _N
 
-keep if west
-dis _N
-
 keep if !mi(edu05)
 dis _N
 
+preserve
 keep if !mi(ped)
 dis _N
 
 keep if !mi(agr05, con05, ext05, neu05, ope05)
 dis _N
 
-keep edu05 ped age05 agr05 con05 ext05 neu05 ope05 wgt05
-
 *** saving data for analysis
+keep edu05 ped fem west age05 agr05 con05 ext05 neu05 ope05 wgt05
 save gsoep-data-2, replace
+restore
+
+*** running multiple imputation
+keep edu05 ped fem west age05 agr05 con05 ext05 neu05 ope05 wgt05
+mi set flong
+mi reg imp ped agr05 con05 ext05 neu05 ope05
+mi imp chain (ologit) ped (regress) agr05 con05 ext05 neu05 ope05 = age05 ///
+             i.edu05, by(west fem) add(20) seed(1)
+save gsoep-midata-2, replace		 
