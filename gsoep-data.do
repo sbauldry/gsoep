@@ -48,29 +48,18 @@ rename (vphrf zphrf) (wgt05 wgt09)
 keep if from2005 == 1
 dis _N
 
-keep if !mi(wgt05)
-dis _N
-
 keep if age05 >= 25
 dis _N
 
 keep if !mi(edu05)
 dis _N
 
-preserve
-keep if !mi(ped)
-dis _N
-
-keep if !mi(agr05, con05, ext05, neu05, ope05)
-dis _N
-
 *** saving data for analysis
 keep edu05 ped fem west age05 agr05 con05 ext05 neu05 ope05 wgt05
 save gsoep-data-2, replace
-restore
+
 
 *** running multiple imputation
-keep edu05 ped fem west age05 agr05 con05 ext05 neu05 ope05 wgt05
 mi set flong
 mi reg imp ped agr05 con05 ext05 neu05 ope05
 mi imp chain (ologit) ped (regress) agr05 con05 ext05 neu05 ope05 = age05 ///
