@@ -74,5 +74,5 @@ keep edu05 ped fem west age05 agr05 con05 ext05 neu05 ope05 wgt05
 mi set flong
 mi reg imp ped agr05 con05 ext05 neu05 ope05
 mi imp chain (ologit) ped (regress) agr05 con05 ext05 neu05 ope05 = age05 ///
-             i.edu05, by(west fem) add(20) seed(1)
+             i.edu05, by(west fem) add(20) rseed(16629829)
 save gsoep-midata-2, replace		 
