@@ -20,7 +20,7 @@ rename (agreeableness05 agreeableness09 conscientiousness05             ///
 
 rename (educ4cat05 educ4cat09) (edu05 edu09)
 
-lab def ed 1 "no voc edu" 2 "apprentice" 3 "master/tech" 4 "university"
+lab def ed 1 "none" 2 "app" 3 "tech" 4 "uni"
 lab val edu05 edu09 ed
 
 gen age05 = 2005 - gebjahr
