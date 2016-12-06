@@ -104,3 +104,83 @@ mi est: prop medu if fem  & west
 mi est: prop medu if fem  & !west
 mi est: prop medu if !fem & west
 mi est: prop medu if !fem & !west
+
+eststo clear
+mi est, post: logit medu age agr05 con05 ext05 neu05 ope05 ///
+  if fem & west [pw = wgt]
+eststo m1
+
+mi est, post: logit medu age agr05 con05 ext05 neu05 ope05 ///
+  if fem & !west [pw = wgt]
+eststo m2
+
+mi est, post: logit medu age agr05 con05 ext05 neu05 ope05 ///
+  if !fem & west [pw = wgt]
+eststo m3
+
+mi est, post: logit medu age agr05 con05 ext05 neu05 ope05 ///
+  if !fem & !west [pw = wgt]
+eststo m4
+
+esttab m1 m2 m3 m4 using tab2.csv, b(%9.2f) se(%9.2f) eform star compress ///
+  nobase nodep nonum nogap
+  
+
+mi xeq: recode age (25/45 = 1) (46/65 = 2) (66/max = 3), gen(rage)
+
+eststo clear
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if fem & west & rage == 1 [pw = wgt]
+eststo m1
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if fem & west & rage == 2 [pw = wgt]
+eststo m2
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if fem & west & rage == 3 [pw = wgt]
+eststo m3
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if fem & !west & rage == 1 [pw = wgt]
+eststo m4
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if fem & !west & rage == 2 [pw = wgt]
+eststo m5
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if fem & !west & rage == 3 [pw = wgt]
+eststo m6
+
+esttab m1 m2 m3 m4 m5 m6 using tab3.csv, b(%9.2f) se(%9.2f) eform star compress ///
+  nobase nodep nonum nogap
+  
+  
+eststo clear
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if !fem & west & rage == 1 [pw = wgt]
+eststo m1
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if !fem & west & rage == 2 [pw = wgt]
+eststo m2
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if !fem & west & rage == 3 [pw = wgt]
+eststo m3
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if !fem & !west & rage == 1 [pw = wgt]
+eststo m4
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if !fem & !west & rage == 2 [pw = wgt]
+eststo m5
+
+mi est, post: logit medu agr05 con05 ext05 neu05 ope05 ///
+  if !fem & !west & rage == 3 [pw = wgt]
+eststo m6
+
+esttab m1 m2 m3 m4 m5 m6 using tab4.csv, b(%9.2f) se(%9.2f) eform star compress ///
+  nobase nodep nonum nogap
