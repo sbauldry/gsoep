@@ -5,7 +5,7 @@
 *** loading data
 use gsoep-midata-2, replace
 
-*** graphing main effects of parent education on personality 
+*** Analysis 1: parent education on personality 
 capture program drop PerPed
 program PerPed
 	args sex reg
@@ -42,6 +42,7 @@ PerPed 0 0
 
 postclose pf
 
+preserve
 use pp, clear
 
 gen id = _n
@@ -70,6 +71,36 @@ PPGr 0 1 g3 "Male West Germany"
 PPGr 0 0 g4 "Male East Germany"
 
 graph combine g1.gph g2.gph g3.gph g4.gph, scheme(s1mono)
+restore
 
 
 
+*** Analysis 2: Parent education and personality on respondent education
+mi est, post: ologit edu05 i.ped age agr05 con05 ext05 neu05 ope05 ///
+  if fem & west [pw = wgt]
+eststo m1
+
+mi est, post: ologit edu05 i.ped age agr05 con05 ext05 neu05 ope05 ///
+  if fem & !west [pw = wgt]
+eststo m2
+
+mi est, post: ologit edu05 i.ped age agr05 con05 ext05 neu05 ope05 ///
+  if !fem & west [pw = wgt]
+eststo m3
+
+mi est, post: ologit edu05 i.ped age agr05 con05 ext05 neu05 ope05 ///
+  if !fem & !west [pw = wgt]
+eststo m4
+
+esttab m1 m2 m3 m4 using tab1.csv, b(%9.2f) se(%9.2f) eform star compress ///
+  nobase nodep nonum nogap
+  
+  
+  
+*** Analysis 3: Personality on educational mobility
+mi xeq: gen medu = (edu05 > ped)
+
+mi est: prop medu if fem  & west
+mi est: prop medu if fem  & !west
+mi est: prop medu if !fem & west
+mi est: prop medu if !fem & !west
