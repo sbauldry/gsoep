@@ -1,0 +1,16 @@
+TITLE: moderated mediation model;
+DATA: FILE = gsoep-midata-list.txt;
+      TYPE = IMPUTATION;
+VARIABLE: NAMES  = edu ped ped1 ped2 ped3 ped4 agr con ext neu ope
+                   ope_p1 ope_p2 ope_p3 ope_p4 wgt fem west age;
+          USEVAR = edu ped2 ped3 ped4 agr con ext neu ope age
+                   ope_p2 ope_p3 ope_p4;
+          USEOBS = fem == 0 AND west == 1;
+          CATEGORICAL = edu;
+          WEIGHT = wgt;
+ANALYSIS: TYPE = GENERAL;
+          ESTIMATOR = MLR;
+MODEL: 
+  ope ON ped2 ped3 ped4 age;
+  edu ON ped2 ped3 ped4 agr con ext neu ope age ope_p2 ope_p3 ope_p4;
+OUTPUT: STDYX;

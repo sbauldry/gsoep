@@ -48,6 +48,9 @@ rename (vphrf zphrf) (wgt05 wgt09)
 keep if from2005 == 1
 dis _N
 
+keep if wgt05 > 0
+dis _N
+
 keep if age05 >= 25
 dis _N
 
@@ -65,3 +68,20 @@ mi reg imp ped agr05 con05 ext05 neu05 ope05
 mi imp chain (ologit) ped (regress) agr05 con05 ext05 neu05 ope05 = age05 ///
              i.edu05, by(west fem) add(20) rseed(16629829)
 save gsoep-midata-2, replace		 
+
+
+*** saving for analysis in Mplus
+forval i = 1/20 {
+	preserve
+	keep if _mi_m == `i'
+	keep edu05 ped age05 agr05 con05 ext05 neu05 ope05 fem west wgt05
+	qui tab ped, gen(ped)
+	forval j = 1/4 {
+		gen ope_p`j' = ped`j'*ope05
+	}
+	order edu05 ped ped1-ped4 agr05 con05 ext05 neu05 ope05 ope_p1 ope_p2 ///
+	      ope_p3 ope_p4
+	desc
+	outsheet using gsoep-midata-`i'.txt, replace comma noname nolabel
+	restore
+}
