@@ -59,10 +59,40 @@ mi est: prop ped if !fem & !west
 restore
 
 
-*** Descriptives for personality measures
-bysort fem west: sum agr05 con05 ext05 neu05 ope05
+*** Descriptives for Table X1
+mi est: prop edu [pw = wgt05] if fem == 1 & west == 1
+mi est: prop edu [pw = wgt05] if fem == 1 & west == 0
+mi est: prop edu [pw = wgt05] if fem == 0 & west == 1
+mi est: prop edu [pw = wgt05] if fem == 0 & west == 0
+
+mi est: prop ped [pw = wgt05] if fem == 1 & west == 1
+mi est: prop ped [pw = wgt05] if fem == 1 & west == 0
+mi est: prop ped [pw = wgt05] if fem == 0 & west == 1
+mi est: prop ped [pw = wgt05] if fem == 0 & west == 0
+
+foreach x of varlist age05 agr05 con05 ext05 neu05 ope05 {
+	forval i = 0/1 {
+		forval j = 0/1 {
+			qui mi est: mean `x' [pw = wgt05] if fem == `i' & west == `j'
+			mat b = e(b_mi)
+			local `x'`i'`j' = b[1,1]
+
+			forval m = 1/20 {
+				qui sum `x' if _mi_m == `m' & fem == `i' & west == `j'
+				local sd`m' = r(sd)
+			}
+			local `x's`i'`j' = (`sd1'  + `sd2'  + `sd3'  + `sd4'  + `sd5'  + ///
+			                    `sd6'  + `sd7'  + `sd8'  + `sd9'  + `sd10' + ///
+								`sd11' + `sd12' + `sd13' + `sd14' + `sd15' + ///
+								`sd16' + `sd17' + `sd18' + `sd19' + `sd20')/20
+		}
+	}
+
+	dis "`x': " as res %5.2f ``x'11' "  " as res %5.2f ``x's11' "  " ///
+	            as res %5.2f ``x'10' "  " as res %5.2f ``x's10' "  " ///
+				as res %5.2f ``x'01' "  " as res %5.2f ``x's01' "  " ///
+				as res %5.2f ``x'00' "  " as res %5.2f ``x's00' 
+}
 
 
-*** Age ranges
-bysort fem west: sum age05
 
