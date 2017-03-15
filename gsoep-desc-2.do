@@ -11,10 +11,11 @@ use gsoep-data-2, replace
 tab fem west
 
 *** Parent education by respondent education
-tab ped edu15
+tab ped edu15, row
+tab ped
 
 *** Age and personality distribution in 2005
-sum age05 agr05 con05 ext05 neu05 ope05
+sum age05 fem west agr05 con05 ext05 neu05 ope05
 
 
 

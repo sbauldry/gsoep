@@ -64,3 +64,67 @@ marginsplot, scheme(s1mono) ytit("pred prob uni")
 
 
 ****** Auxiliary analysis ******
+
+*** 1. restrict sample to ages 24 and lower
+eststo clear
+foreach x of varlist agr05 con05 ext05 neu05 ope05 {
+	regress `x' i.ped age fem west if age < 25
+	eststo m`x'
+}
+
+esttab magr05 mcon05 mext05 mneu05 mope05, ///
+  replace b(%9.2f) se(%9.2f) stat(N r2) nonum nogap nobase
+  
+ologit edu15 age05 fem west i.ped agr05 con05 ext05 neu05 ope05 if age < 25
+
+
+*** 2. stratify by sex
+* male
+eststo clear
+foreach x of varlist agr05 con05 ext05 neu05 ope05 {
+	regress `x' i.ped age west if fem == 0
+	eststo m`x'
+}
+
+esttab magr05 mcon05 mext05 mneu05 mope05, ///
+  replace b(%9.2f) se(%9.2f) stat(N r2) nonum nogap nobase
+  
+ologit edu15 age05 west i.ped agr05 con05 ext05 neu05 ope05 if fem == 0
+
+* female
+eststo clear
+foreach x of varlist agr05 con05 ext05 neu05 ope05 {
+	regress `x' i.ped age west if fem == 1
+	eststo m`x'
+}
+
+esttab magr05 mcon05 mext05 mneu05 mope05, ///
+  replace b(%9.2f) se(%9.2f) stat(N r2) nonum nogap nobase
+  
+ologit edu15 age05 west i.ped agr05 con05 ext05 neu05 ope05 if fem == 1
+
+
+*** 3. stratify by region
+* west
+eststo clear
+foreach x of varlist agr05 con05 ext05 neu05 ope05 {
+	regress `x' i.ped age fem if west == 1
+	eststo m`x'
+}
+
+esttab magr05 mcon05 mext05 mneu05 mope05, ///
+  replace b(%9.2f) se(%9.2f) stat(N r2) nonum nogap nobase
+  
+ologit edu15 age05 fem i.ped agr05 con05 ext05 neu05 ope05 if west == 1
+
+* east
+eststo clear
+foreach x of varlist agr05 con05 ext05 neu05 ope05 {
+	regress `x' i.ped age fem if west == 0
+	eststo m`x'
+}
+
+esttab magr05 mcon05 mext05 mneu05 mope05, ///
+  replace b(%9.2f) se(%9.2f) stat(N r2) nonum nogap nobase
+  
+ologit edu15 age05 fem i.ped agr05 con05 ext05 neu05 ope05 if west == 0

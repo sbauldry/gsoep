@@ -55,7 +55,14 @@ keep if !mi(agr05, con05, ext05, neu05, ope05, ped)
 dis _N
 
 *** saving data for analysis
-keep edu15 ped fem west age05 agr05 con05 ext05 neu05 ope05 wgt05 wgt15
+keep edu15 ped fem west age05 agr05 con05 ext05 neu05 ope05
 save gsoep-data-2, replace
+
+*** saving data for analysis in mplus
+qui tab ped, gen(ped)
+order edu ped2-ped4 agr05 con05 ext05 neu05 ope05 fem west age05
+keep edu-age05
+outsheet using gsoep-mplus-data-2.txt, replace comma noname nolabel
+
 
 
