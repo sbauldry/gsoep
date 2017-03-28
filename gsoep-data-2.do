@@ -3,7 +3,7 @@
 *** Date: March 14, 2017
 
 *** loading data prepared by Renee Ryberg
-use GSOEPclean_V6, replace
+use GSOEPclean_V7, replace
 
 *** additional data preparation
 gen fem = (sex == 2)
@@ -12,13 +12,16 @@ lab val fem s
 
 gen west = (l1110205 == 1) if !mi(l1110205)
 
-rename (agreeableness05 conscientiousness05 extraversion05 neuroticism05  ///
-		openness05 educ4cat15 stillineduc) (agr05 con05 ext05 neu05 ope05 ///
-		edu15 inedu)
+rename (agreeableness05 conscientiousness05 extraversion05 neuroticism05   ///
+		openness05 educ4 stillineduc mps92_15 emplst15) (agr con ext neu   ///
+		ope edu inedu pst ems)
 lab def ed 1 "none" 2 "app" 3 "tech" 4 "uni"
-lab val edu15 ed
+lab val edu ed
 
-gen age05 = 2005 - gebjahr
+gen inc = ln(labgro15)
+replace inc = . if ems != 1
+
+gen age = 2005 - gebjahr
 
 gen fed = .
 replace fed = 1 if vsbil < 7 & vbbil == 10
@@ -36,29 +39,31 @@ egen ped = rowmax(fed med)
 lab var ped "parent education"   
 lab val ped ed
 
-rename (vphrf bfphrf) (wgt05 wgt15)
+gen wgt = vphrf*wpbleib*xpbleib*ypbleib*zpbleib*bapbleib*bbpbleib*bcpbleib*bdpbleib*bepbleib
+replace wgt = 1/wgt if wgt != 0
 
 *** keeping variables for analysis and setting analysis sample
 keep if from2005 == 1
 dis _N
 
-keep if wgt05 > 0
+keep if wgt > 0
 dis _N
 
-keep if age05 <= 25
+keep if age <= 25
 dis _N
 
-keep if !mi(edu15)
+keep if !mi(edu)
 dis _N
 
-keep if !mi(agr05, con05, ext05, neu05, ope05, ped)
+keep if !mi(agr, con, ext, neu, ope, ped)
 dis _N
 
 *** saving data for analysis
-keep edu15 ped fem west age05 agr05 con05 ext05 neu05 ope05
+order edu ems inc pst ped fem west age agr con ext neu ope wgt
+keep edu-wgt
 save gsoep-data-2, replace
 
-*** saving data for analysis in mplus
+/*** saving data for analysis in mplus
 qui tab ped, gen(ped)
 order edu ped2-ped4 agr05 con05 ext05 neu05 ope05 fem west age05
 keep edu-age05
