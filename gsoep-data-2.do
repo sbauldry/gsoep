@@ -39,6 +39,9 @@ egen ped = rowmax(fed med)
 lab var ped "parent education"   
 lab val ped ed
 
+alpha f96t30g f96t60g f96t90g, gen(ani)
+alpha f99z30r f99z60r f99z90r, gen(num)
+
 gen wgt = vphrf*wpbleib*xpbleib*ypbleib*zpbleib*bapbleib*bbpbleib*bcpbleib*bdpbleib*bepbleib
 replace wgt = 1/wgt if wgt != 0
 
@@ -56,7 +59,7 @@ keep if !mi(agr, con, ext, neu, ope, ped)
 dis _N
 
 *** saving data for analysis
-order edu ems inc pst ped fem west age agr con ext neu ope wgt
+order edu ems inc pst ped fem west age agr con ext neu ope ani num wgt
 keep edu-wgt
 save gsoep-data-2, replace
 

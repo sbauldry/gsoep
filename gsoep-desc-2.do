@@ -5,22 +5,16 @@
 *** loading data
 use gsoep-data-2, replace
 
-
 ****** Unweighted descriptives ******
 *** Gender by region distribution
 tab fem west
 
 *** Parent education by respondent education
-tab ped edu15, row
+tab ped edu, row
 tab ped
 
 *** Age and personality distribution in 2005
-sum age05 fem west agr05 con05 ext05 neu05 ope05
-
-
-
-****** Weighted descriptives *******
-*** Note: we do not have the weight variables necessary (p 40)
+sum age fem west agr con ext neu ope
 
 
 
