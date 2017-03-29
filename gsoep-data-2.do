@@ -46,9 +46,6 @@ replace wgt = 1/wgt if wgt != 0
 keep if from2005 == 1
 dis _N
 
-keep if wgt > 0
-dis _N
-
 keep if age <= 25
 dis _N
 
