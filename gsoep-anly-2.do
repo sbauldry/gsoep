@@ -162,6 +162,7 @@ marginsplot, scheme(s1mono) ytit("pred prob uni")
 *** 2. stratify by sex
 *** 3. stratify by region
 *** 4. check income and occupational prestige
+*** 5. check ability measures
 
 eststo clear
 postutil clear
@@ -355,3 +356,8 @@ GraphEst2 pst "Prestige" g2 1
 graph combine g1.gph g2.gph, scheme(s1mono)
 graph export gsoep-2-figX2-aux2.pdf, replace
 restore
+
+
+*** Regress education on personality and parent education adjusting for ability
+ologit edu agr con ext neu ope i.ped age fem west if !mi(ani)
+ologit edu agr con ext neu ope i.ped age fem west ani num 
