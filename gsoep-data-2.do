@@ -12,9 +12,9 @@ lab val fem s
 
 gen west = (l1110205 == 1) if !mi(l1110205)
 
-rename (agreeableness05 conscientiousness05 extraversion05 neuroticism05   ///
-		openness05 educ4 stillineduc mps92_15 emplst15) (agr con ext neu   ///
-		ope edu inedu pst ems)
+rename (agreeableness05 conscientiousness05 extraversion05 neuroticism05 ///
+		openness05 educ4 stillineduc mps92_15 emplst15 eddegree15)       ///
+		(agr con ext neu ope edu inedu pst ems sdg)
 lab def ed 1 "none" 2 "app" 3 "tech" 4 "uni"
 lab val edu ed
 
@@ -59,8 +59,8 @@ keep if !mi(agr, con, ext, neu, ope, ped)
 dis _N
 
 *** saving data for analysis
-order edu ems inc pst ped fem west age agr con ext neu ope ani num wgt
-keep edu-wgt
+order edu sdg ems inc pst ped fed med fem west age agr con ext neu ope ani num
+keep edu-num
 save gsoep-data-2, replace
 
 /*** saving data for analysis in mplus
