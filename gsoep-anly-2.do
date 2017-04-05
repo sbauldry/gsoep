@@ -163,6 +163,7 @@ marginsplot, scheme(s1mono) ytit("pred prob uni")
 *** 3. stratify by region
 *** 4. check income and occupational prestige
 *** 5. check ability measures
+*** 6. check mother's vs. father's education
 
 eststo clear
 postutil clear
@@ -339,8 +340,8 @@ use d2
 gen ub = es + 1.96*sqrt(se)
 gen lb = es - 1.96*sqrt(se)
 
-capture program drop GraphEst2
-program GraphEst2
+capture program drop GraphEst3
+program GraphEst3
 	args dv tit sv
 	
 	graph twoway (rspike ub lb iv if dv == "`dv'" , hor)                    ///
@@ -351,8 +352,8 @@ program GraphEst2
 				 ytit("") legend(off) saving(`sv', replace)
 end
 
-GraphEst2 inc "Income"   g1 1 
-GraphEst2 pst "Prestige" g2 1 
+GraphEst3 inc "Income"   g1 1 
+GraphEst3 pst "Prestige" g2 1 
 graph combine g1.gph g2.gph, scheme(s1mono)
 graph export gsoep-2-figX2-aux2.pdf, replace
 restore
@@ -361,3 +362,74 @@ restore
 *** Regress education on personality and parent education adjusting for ability
 ologit edu agr con ext neu ope i.ped age fem west if !mi(ani)
 ologit edu agr con ext neu ope i.ped age fem west ani num 
+
+
+*** Separating mother's and father's education
+keep if !mi(fed, med)
+tab fed fem
+tab med fem
+
+eststo clear
+postutil clear
+
+postfile pf1 md str3 dv iv es se using d1, replace
+foreach x of varlist agr con ext neu ope {	
+	
+	qui regress `x' i.fed i.med age fem west 
+	mat b = e(b)
+	mat v = e(V)
+	forval i = 2/8 {
+		post pf1 (1) ("`x'") (`i') (b[1,`i']) (v[`i',`i'])
+	}
+	
+	qui regress `x' i.fed i.med age west if fem == 0
+	mat b = e(b)
+	mat v = e(V)
+	forval i = 2/8 {
+		post pf1 (2) ("`x'") (`i') (b[1,`i']) (v[`i',`i'])
+	}
+	
+	qui regress `x' i.fed i.med age west if fem == 1
+	mat b = e(b)
+	mat v = e(V)
+	forval i = 2/8 {
+		post pf1 (3) ("`x'") (`i') (b[1,`i']) (v[`i',`i'])
+	}
+	
+}
+postclose pf1
+
+preserve
+use d1, replace
+drop if iv == 5
+gen ub = es + 1.96*sqrt(se)
+gen lb = es - 1.96*sqrt(se)
+
+capture program drop GraphEst4
+program GraphEst4
+	args md dv tit sv xl xlb1 xlb2 xlb3
+	
+	graph twoway (rspike ub lb iv if dv == "`dv'" & md == `md', hor)       ///
+				 (dot es iv if dv == "`dv'" & md == `md', hor msiz(small)  ///
+				  mc(black) ndot(1)), scheme(s1mono) tit("`tit'")          ///
+                 ylab(2 "fat edu: app"  3 "fat edu: tech" 4 "fat edu: uni" ///
+				      6 "mot edu: app"  7 "mot edu: tech" 8 "mot edu: uni" ///
+                      , angle(h)) xtit("estimate") ytit("") legend(off)    ///
+			     xline(`xl', lp(shortdash)) xlab(`xlb1'(`xlb2')`xlb3')     ///
+				 saving(`sv', replace)
+end
+
+forval i = 1/3 {
+	GraphEst4 `i' agr "Agreeableness" g1 0 -2 2 4
+	GraphEst4 `i' con "Conscientiousness" g2 0 -2 2 4
+	GraphEst4 `i' ext "Extraversion" g3 0 -2 2 4
+	GraphEst4 `i' neu "Neuroticism" g4 0 -2 2 4
+	GraphEst4 `i' ope "Openess" g5 0 -2 2 4
+	graph combine g1.gph g2.gph g3.gph g4.gph g5.gph, scheme(s1mono) ///
+	      tit("Model `i'")
+	graph export ~/desktop/gsoep-2-figA`i'.pdf, replace
+}
+restore
+
+ologit edu agr con ext neu ope i.fed i.med age fem west 
+
