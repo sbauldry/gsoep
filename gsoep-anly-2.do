@@ -61,7 +61,6 @@ restore
 *** Regress education on personality and parent education
 eststo clear
 postutil clear
-
 postfile pf2 str3 md str3 dv iv es se using d2, replace
 
 qui ologit edu agr con ext neu ope 
@@ -164,6 +163,7 @@ marginsplot, scheme(s1mono) ytit("pred prob uni")
 *** 4. check income and occupational prestige
 *** 5. check ability measures
 *** 6. check mother's vs. father's education
+*** 7. check secondary degrees
 
 eststo clear
 postutil clear
@@ -433,3 +433,59 @@ restore
 
 ologit edu agr con ext neu ope i.fed i.med age fem west 
 
+
+*** Analyzing secondary degrees
+recode sdg (5 = .) (6 = 0)
+
+postutil clear
+postfile pf2 str3 md str3 dv iv es se using d2, replace
+
+qui ologit sdg agr con ext neu ope 
+eststo m1sdg
+mat b1 = e(b)
+mat v1 = e(V)
+
+forval i = 1/5 {
+	post pf2 ("m1") ("sdg") (`i') (b1[1,`i']) (v1[`i',`i'])
+}
+
+qui ologit sdg agr con ext neu ope i.ped age fem west 
+eststo m2sdg
+mat b2 = e(b)
+mat v2 = e(V)
+
+forval i = 1/5 {
+	post pf2 ("m2") ("sdg") (`i') (b2[1,`i']) (v2[`i',`i'])
+}
+
+postclose pf2
+
+esttab m1sdg m2sdg using gsoep-2-tab-sdg.csv, replace b(%9.2f) se(%9.2f) ///
+  stat(N r2) nonum nogap nobase
+  
+preserve
+use d2, replace
+gen ub = es + 1.96*sqrt(se)
+gen lb = es - 1.96*sqrt(se)
+replace es = exp(es)
+replace ub = exp(ub)
+replace lb = exp(lb)
+
+capture program drop GraphEst5
+program GraphEst5
+	args md dv tit sv xl xlb1 xlb2 xlb3
+	
+	graph twoway (rspike ub lb iv if dv == "`dv'" & md == "`md'", hor)      ///
+				 (dot es iv if dv == "`dv'" & md == "`md'", hor msiz(small) ///
+				  mc(black) ndot(1)), scheme(s1mono) tit("`tit'")           ///
+                 ylab(1 "agr"  2 "con" 3 "ext" 4 "neu" 5 "ope", angle(h))   ///
+		         xtit("estimate") xline(`xl', lp(shortdash))                ///
+				 ytit("") legend(off) xlab(`xlb1'(`xlb2')`xlb3')            ///
+				 saving(`sv', replace)
+end
+
+GraphEst5 m1 sdg "Model 1" g1 1 0.8 0.1 1.2
+GraphEst5 m2 sdg "Model 2" g2 1 0.8 0.1 1.2
+graph combine g1.gph g2.gph, scheme(s1mono) tit("Secondary Degree")
+graph export gsoep-2-fig-sdg.pdf, replace
+restore
