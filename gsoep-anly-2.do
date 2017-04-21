@@ -100,7 +100,7 @@ forval i = 1/5 {
 	post pf2 ("m4") ("edu") (`i') (b2[1,`i']) (v2[`i',`i'])
 }
 
-qui ologit edu agr con ext neu ope i.ped age fem west i.sdg
+ologit edu agr con ext neu ope i.ped age fem west b4.sdg
 eststo m3edu
 mat b2 = e(b)
 mat v2 = e(V)
