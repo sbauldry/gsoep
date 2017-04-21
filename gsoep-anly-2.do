@@ -58,10 +58,29 @@ graph export gsoep-2-figX1.pdf, replace
 restore
   
 
-*** Regress education on personality and parent education
+
+*** Education models
 eststo clear
 postutil clear
 postfile pf2 str3 md str3 dv iv es se using d2, replace
+
+qui ologit sdg agr con ext neu ope 
+eststo m1sdg
+mat b1 = e(b)
+mat v1 = e(V)
+
+forval i = 1/5 {
+	post pf2 ("m1") ("sdg") (`i') (b1[1,`i']) (v1[`i',`i'])
+}
+
+qui ologit sdg agr con ext neu ope i.ped age fem west 
+eststo m2sdg
+mat b2 = e(b)
+mat v2 = e(V)
+
+forval i = 1/5 {
+	post pf2 ("m2") ("sdg") (`i') (b2[1,`i']) (v2[`i',`i'])
+}
 
 qui ologit edu agr con ext neu ope 
 eststo m1edu
@@ -69,7 +88,7 @@ mat b1 = e(b)
 mat v1 = e(V)
 
 forval i = 1/5 {
-	post pf2 ("m1") ("edu") (`i') (b1[1,`i']) (v1[`i',`i'])
+	post pf2 ("m3") ("edu") (`i') (b1[1,`i']) (v1[`i',`i'])
 }
 
 qui ologit edu agr con ext neu ope i.ped age fem west 
@@ -78,21 +97,31 @@ mat b2 = e(b)
 mat v2 = e(V)
 
 forval i = 1/5 {
-	post pf2 ("m2") ("edu") (`i') (b2[1,`i']) (v2[`i',`i'])
+	post pf2 ("m4") ("edu") (`i') (b2[1,`i']) (v2[`i',`i'])
+}
+
+qui ologit edu agr con ext neu ope i.ped age fem west i.sdg
+eststo m3edu
+mat b2 = e(b)
+mat v2 = e(V)
+
+forval i = 1/5 {
+	post pf2 ("m5") ("edu") (`i') (b2[1,`i']) (v2[`i',`i'])
 }
 
 postclose pf2
 
-esttab m1edu m2edu using gsoep-2-tab3.csv, replace b(%9.2f) se(%9.2f) ///
-  stat(N r2) nonum nogap nobase
+esttab m1sdg m2sdg m1edu m2edu m3edu using gsoep-2-tab3.csv, replace ///
+  b(%9.2f) se(%9.2f) stat(N r2) nonum nogap nobase
+
   
 preserve
 use d2
 gen ub = es + 1.96*sqrt(se)
 gen lb = es - 1.96*sqrt(se)
-replace es = exp(es) if dv == "edu"
-replace ub = exp(ub) if dv == "edu"
-replace lb = exp(lb) if dv == "edu"
+replace es = exp(es) 
+replace ub = exp(ub) 
+replace lb = exp(lb)
 
 capture program drop GraphEst2
 program GraphEst2
@@ -107,10 +136,18 @@ program GraphEst2
 				 saving(`sv', replace)
 end
 
-GraphEst2 m1 edu "Model 1" g1 1 0.8 0.1 1.2
-GraphEst2 m2 edu "Model 2" g2 1 0.8 0.1 1.2
-graph combine g1.gph g2.gph, scheme(s1mono) tit("Education")
-graph export gsoep-2-figX2.pdf, replace
+GraphEst2 m1 sdg "Model 1" g1 1 0.8 0.1 1.2
+GraphEst2 m2 sdg "Model 2" g2 1 0.8 0.1 1.2
+GraphEst2 m3 edu "Model 1" g3 1 0.8 0.1 1.2
+GraphEst2 m4 edu "Model 2" g4 1 0.8 0.1 1.2
+GraphEst2 m5 edu "Model 3" g5 1 0.8 0.1 1.2
+
+graph combine g1.gph g2.gph, scheme(s1mono) tit("Secondary Degree Type") ///
+  rows(1) saving(g6, replace)
+graph combine g3.gph g4.gph g5.gph, scheme(s1mono) rows(1) ///
+  tit("Educational Attainment") saving(g7, replace)
+graph combine g6.gph g7.gph, scheme(s1mono) rows(2)
+graph export gsoep-2-fig3.pdf, replace
 restore
 
 
@@ -163,7 +200,6 @@ marginsplot, scheme(s1mono) ytit("pred prob uni")
 *** 4. check income and occupational prestige
 *** 5. check ability measures
 *** 6. check mother's vs. father's education
-*** 7. check secondary degrees
 
 eststo clear
 postutil clear
@@ -434,58 +470,4 @@ restore
 ologit edu agr con ext neu ope i.fed i.med age fem west 
 
 
-*** Analyzing secondary degrees
-recode sdg (5 = .) (6 = 0)
 
-postutil clear
-postfile pf2 str3 md str3 dv iv es se using d2, replace
-
-qui ologit sdg agr con ext neu ope 
-eststo m1sdg
-mat b1 = e(b)
-mat v1 = e(V)
-
-forval i = 1/5 {
-	post pf2 ("m1") ("sdg") (`i') (b1[1,`i']) (v1[`i',`i'])
-}
-
-qui ologit sdg agr con ext neu ope i.ped age fem west 
-eststo m2sdg
-mat b2 = e(b)
-mat v2 = e(V)
-
-forval i = 1/5 {
-	post pf2 ("m2") ("sdg") (`i') (b2[1,`i']) (v2[`i',`i'])
-}
-
-postclose pf2
-
-esttab m1sdg m2sdg using gsoep-2-tab-sdg.csv, replace b(%9.2f) se(%9.2f) ///
-  stat(N r2) nonum nogap nobase
-  
-preserve
-use d2, replace
-gen ub = es + 1.96*sqrt(se)
-gen lb = es - 1.96*sqrt(se)
-replace es = exp(es)
-replace ub = exp(ub)
-replace lb = exp(lb)
-
-capture program drop GraphEst5
-program GraphEst5
-	args md dv tit sv xl xlb1 xlb2 xlb3
-	
-	graph twoway (rspike ub lb iv if dv == "`dv'" & md == "`md'", hor)      ///
-				 (dot es iv if dv == "`dv'" & md == "`md'", hor msiz(small) ///
-				  mc(black) ndot(1)), scheme(s1mono) tit("`tit'")           ///
-                 ylab(1 "agr"  2 "con" 3 "ext" 4 "neu" 5 "ope", angle(h))   ///
-		         xtit("estimate") xline(`xl', lp(shortdash))                ///
-				 ytit("") legend(off) xlab(`xlb1'(`xlb2')`xlb3')            ///
-				 saving(`sv', replace)
-end
-
-GraphEst5 m1 sdg "Model 1" g1 1 0.8 0.1 1.2
-GraphEst5 m2 sdg "Model 2" g2 1 0.8 0.1 1.2
-graph combine g1.gph g2.gph, scheme(s1mono) tit("Secondary Degree")
-graph export gsoep-2-fig-sdg.pdf, replace
-restore

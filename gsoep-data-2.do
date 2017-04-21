@@ -15,8 +15,10 @@ gen west = (l1110205 == 1) if !mi(l1110205)
 rename (agreeableness05 conscientiousness05 extraversion05 neuroticism05 ///
 		openness05 educ4 stillineduc mps92_15 emplst15 eddegree15)       ///
 		(agr con ext neu ope edu inedu pst ems sdg)
-lab def ed 1 "none" 2 "app" 3 "tech" 4 "uni"
+lab def ed 1 "sec" 2 "app" 3 "tech" 4 "uni"
 lab val edu ed
+
+recode sdg (5 = .) (6 = 0)
 
 gen inc = ln(labgro15)
 replace inc = . if ems != 1
