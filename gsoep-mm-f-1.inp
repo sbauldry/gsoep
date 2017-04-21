@@ -1,6 +1,5 @@
 TITLE: moderated mediation model;
-DATA: FILE = gsoep-midata-list.txt;
-      TYPE = IMPUTATION;
+DATA: FILE = gsoep-mplus-data-2.txt;
 VARIABLE: NAMES  = edu ped ped1 ped2 ped3 ped4 agr con ext neu ope
                    ope_p1 ope_p2 ope_p3 ope_p4 wgt fem west age;
           USEVAR = edu ped2 ped3 ped4 agr con ext neu ope age;

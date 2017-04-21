@@ -65,10 +65,11 @@ order edu sdg ems inc pst ped fed med fem west age agr con ext neu ope ani num
 keep edu-num
 save gsoep-data-2, replace
 
-/*** saving data for analysis in mplus
+*** saving data for analysis in mplus
 qui tab ped, gen(ped)
-order edu ped2-ped4 agr05 con05 ext05 neu05 ope05 fem west age05
-keep edu-age05
+order sdg edu ped2-ped4 agr con ext neu ope fem west age
+keep sdg-age
+recode sdg (. = -9)
 outsheet using gsoep-mplus-data-2.txt, replace comma noname nolabel
 
 
