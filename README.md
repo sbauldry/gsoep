@@ -1,5 +1,5 @@
 # gsoep
-This repository contains code related to an analysis of the relationships between parent education, the Big 5 dimensions of personality, and education using data from the German Socio-Economic Panel study. The results of this analysis are reported in Ryberg et al.. Information about obtaining the data for the analysis can be found [here](http://www.eui.eu/Research/Library/ResearchGuides/Economics/Statistics/DataPortal/GSOEP.aspx).
+This repository contains code related to an analysis of the relationships between parent education, the Big 5 dimensions of personality, and education using data from the German Socio-Economic Panel study. The results of this analysis are reported in Ryberg et al. (2017) Information about obtaining the data for the analysis can be found [here](http://www.eui.eu/Research/Library/ResearchGuides/Economics/Statistics/DataPortal/GSOEP.aspx).
 
 # Files
 Stata data preparation and analysis files.
@@ -13,4 +13,4 @@ Mplus analysis files.
 - gsoep-mm-2-sdg.inp: Program to test indirect effects with secondary degree as outcome.
 
 # Citation
-Ryberg, Renee, Shawn Bauldry, Michael Shultz, Annekatrin Steinhoff, and Michael Shanahan. accepted for publication. “Personality and the Intergenerational Transmission of Educational Attainment: Evidence from the German Socio-Economic Panel." *Journal of Youth and Adolescence*.
+Ryberg, Renee, Shawn Bauldry, Michael Shultz, Annekatrin Steinhoff, and Michael Shanahan. 2017. “Personality and the Intergenerational Transmission of Educational Attainment: Evidence from the German Socio-Economic Panel." *Journal of Youth and Adolescence*.
